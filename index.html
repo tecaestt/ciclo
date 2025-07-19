@@ -28,7 +28,7 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            background: linear-gradient(135deg, #717172 0%, #2B2D2E 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -342,7 +342,7 @@
                 <div id="resumoGeral"></div>
                 
                 <div style="background: white; border-radius: 10px; padding: 30px; margin: 20px 0; color: #333;">
-                    <h3 style="color: #6c757d; text-align: center; margin-bottom: 30px;">📊 Distribuição das Matérias</h3>
+                    <h3 style="color: #000; text-align: center; margin-bottom: 30px;">📊 Distribuição das Matérias</h3>
                     <div style="display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap;">
                         <canvas id="graficoPizza" width="300" height="300" style="border-radius: 10px;"></canvas>
                         <div id="legendaGrafico" style="max-width: 250px;"></div>
@@ -677,10 +677,10 @@
             var radius = Math.min(centerX, centerY) - 20;
             
             var cores = [
-                '#6c757d', '#adb5bd', '#495057', '#868e96', 
-                '#dee2e6', '#ced4da', '#f8f9fa', '#e9ecef',
-                '#6c757d', '#adb5bd', '#495057', '#868e96',
-                '#dee2e6', '#ced4da'
+                '#D20103', '#FE9900', '#FFDE59', '#7DDA58', 
+                '#5DE2E7', '#A347BD', '#DFC57B', '#85981E',
+                '#FF2870', '#9D1A46', '#2A9FA0', '#6DFF3C',
+                '#28DFC3', '#FE31B9'
             ];
             
             var total = materias.reduce(function(sum, m) { return sum + m.minutosSemanais; }, 0);
