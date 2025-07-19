@@ -424,11 +424,13 @@
             }
         }
 
-       function gerarCiclo() {
+ 
+function gerarCiclo() {
     var tempoSemana = parseFloat(document.getElementById('tempoSemana').value) || 0;
     var tempoSabado = parseFloat(document.getElementById('tempoSabado').value) || 0;
     var tempoDomingo = parseFloat(document.getElementById('tempoDomingo').value) || 0;
-    var nivelFoco = parseInt(document.getElementById('nivelFoco').value);
+    var nivelFocoElement = document.getElementById('nivelFoco');
+    var nivelFoco = parseInt(nivelFocoElement ? nivelFocoElement.value : 45) || 45;
     
     var tempoTotalSemanal = (tempoSemana * 5) + tempoSabado + tempoDomingo;
     var minutosSemanais = tempoTotalSemanal * 60;
@@ -527,7 +529,7 @@ function gerarCicloSequencial(materias) {
                 nome: materia.nome,
                 dificuldade: materia.dificuldade,
                 importanciaGeral: materia.importanciaGeral,
-                minutosNecessarios: nivelFoco, // Usar o nível de foco padrão
+                minutosNecessarios: parseInt(document.getElementById('nivelFoco')?.value) || 45,
                 sessaoNumero: j + 1,
                 totalSessoes: materia.sessoes
             });
@@ -539,10 +541,9 @@ function gerarCicloSequencial(materias) {
         return b.importanciaGeral - a.importanciaGeral; 
     });
     
-    // NOVA LÓGICA: Evitar repetições com MAX_REPETICOES = 0
+    // NOVA LÓGICA: Intercalação INTELIGENTE com flexibilidade
     var cicloFinal = [];
     var itensRestantes = listaExpandida.slice();
-    var MAX_REPETICOES = 0; // ZERO repetições seguidas
     
     while (itensRestantes.length > 0) {
         var proximoItem = null;
@@ -556,16 +557,71 @@ function gerarCicloSequencial(materias) {
         });
         
         if (itensDisponiveis.length > 0) {
-            // Encontrou opção sem repetir - escolher a mais importante
-            itensDisponiveis.sort(function(a, b) { 
-                return b.importanciaGeral - a.importanciaGeral; 
-            });
-            proximoItem = itensDisponiveis[0];
-            melhorIndice = itensRestantes.indexOf(proximoItem);
+            // Encontrou opção sem repetir - escolher baseado em prioridade e intervalo
+            for (var k = 0; k < itensDisponiveis.length; k++) {
+                var item = itensDisponiveis[k];
+                var indiceReal = itensRestantes.indexOf(item);
+                
+                // Calcular última posição desta matéria
+                var ultimaPosicao = -1;
+                for (var l = cicloFinal.length - 1; l >= 0; l--) {
+                    if (cicloFinal[l].nome === item.nome) {
+                        ultimaPosicao = l;
+                        break;
+                    }
+                }
+                
+                var intervaloAtual = ultimaPosicao === -1 ? 999 : cicloFinal.length - ultimaPosicao;
+                
+                // Definir intervalo ideal baseado na importância (FLEXÍVEL)
+                var intervaloIdeal;
+                if (item.importanciaGeral >= 4.5) {
+                    intervaloIdeal = 2; // Alta importância: a cada 2-3 sessões
+                } else if (item.importanciaGeral >= 3.5) {
+                    intervaloIdeal = 3; // Média importância: a cada 3-4 sessões  
+                } else if (item.importanciaGeral >= 2.5) {
+                    intervaloIdeal = 4; // Baixa importância: a cada 4-5 sessões
+                } else {
+                    intervaloIdeal = 5; // Muito baixa: a cada 5-6 sessões
+                }
+                
+                // Verificar se é hora de aparecer OU se é a mais importante disponível
+                if (intervaloAtual >= intervaloIdeal || ultimaPosicao === -1) {
+                    if (!proximoItem || item.importanciaGeral > proximoItem.importanciaGeral) {
+                        proximoItem = item;
+                        melhorIndice = indiceReal;
+                    }
+                }
+            }
+            
+            // Se não encontrou por intervalo, pegar a mais importante disponível
+            if (!proximoItem) {
+                itensDisponiveis.sort(function(a, b) { 
+                    return b.importanciaGeral - a.importanciaGeral; 
+                });
+                proximoItem = itensDisponiveis[0];
+                melhorIndice = itensRestantes.indexOf(proximoItem);
+            }
             
         } else {
-            // Só sobrou a mesma matéria - com ZERO repetições, FECHA o ciclo!
-            break; // Para aqui e fecha o ciclo
+            // Só sobrou a mesma matéria - PERMITIR até 2 repetições
+            var repeticoesSeguidas = 0;
+            for (var m = cicloFinal.length - 1; m >= 0; m--) {
+                if (cicloFinal[m].nome === ultimoNome) {
+                    repeticoesSeguidas++;
+                } else {
+                    break;
+                }
+            }
+            
+            if (repeticoesSeguidas < 2) {
+                // Permitir repetição (máximo 2 seguidas)
+                proximoItem = itensRestantes[0];
+                melhorIndice = 0;
+            } else {
+                // Já repetiu 2 vezes - fechar ciclo
+                break;
+            }
         }
         
         if (proximoItem) {
