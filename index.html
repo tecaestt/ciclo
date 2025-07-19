@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planilha Ciclo de Estudos - Estéffani</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+        
+        .section-title {
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6c757d;
+        }
+        
+        .materias-container {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            background: white;
+        }
+        
+        .materia-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .materia-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 80px;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .materia-item:last-child {
+            border-bottom: none;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .resultado {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .ciclo-resultado {
+            background: white;
+            color: #333;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .ciclo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 16px;
+        }
+        
+        .ciclo-item:last-child {
+            border-bottom: none;
+        }
+        
+        .materia-nome {
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .tempo-info {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            height: 100%;
+            transition: width 0.3s;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .materia-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Planilha Ciclo de Estudos</h1>
+            <p>Organize seus estudos como a Estéffani ensina</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2 class="section-title">⏰ Sua Disponibilidade de Tempo</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Segunda a Sexta (horas por dia):</label>
+                        <input type="number" id="tempoSemana" min="0" max="16" step="0.5" value="2" placeholder="Ex: 2.5">
+                    </div>
+                    <div class="form-group">
+                        <label>Sábado (horas):</label>
+                        <input type="number" id="tempoSabado" min="0" max="16" step="0.5" value="3" placeholder="Ex: 3">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Domingo (horas):</label>
+                        <input type="number" id="tempoDomingo" min="0" max="16" step="0.5" value="2" placeholder="Ex: 2">
+                    </div>
+                    <div class="form-group">
+                        <label>Seu Nível de Foco:</label>
+                        <select id="nivelFoco">
+                            <option value="25">Pomodoro (25 min)</option>
+                            <option value="30">Iniciante (30 min)</option>
+                            <option value="45" selected>Médio (45 min)</option>
+                            <option value="60">Avançado (60 min)</option>
+                            <option value="90">Expert (90 min)</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="tempoSemanalTotal" style="margin-top: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; text-align: center; font-weight: 600; color: #495057;">
+                    Tempo total semanal: <span id="totalHoras">17.0</span> horas
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">📖 Matérias do seu Edital</h2>
+                <div class="alert alert-info">
+                    <strong>Dica da Estéffani:</strong> Comece com 4-6 matérias no máximo. Vá adicionando conforme evolui!
+                </div>
+                
+                <div class="materias-container">
+                    <div class="materia-item" style="font-weight: 600; background: #f8f9fa;">
+                        <div class="materia-row">
+                            <div>Matéria</div>
+                            <div>Peso (1-5)</div>
+                            <div>Dificuldade (1-5)</div>
+                            <div>Extensão (1-5)</div>
+                            <div>Ação</div>
+                        </div>
+                    </div>
+                    
+                    <div id="materiasList">
+                        <div class="materia-item">
+                            <div class="materia-row">
+                                <div>
+                                    <select class="materia-select" onchange="toggleCustomInput(this)">
+                                        <option value="">Selecione uma matéria</option>
+                                        <option value="Português">Português</option>
+                                        <option value="Direito Constitucional">Direito Constitucional</option>
+                                        <option value="Direito Administrativo">Direito Administrativo</option>
+                                        <option value="Raciocínio Lógico">Raciocínio Lógico</option>
+                                        <option value="Matemática">Matemática</option>
+                                        <option value="Informática">Informática</option>
+                                        <option value="Direito Civil">Direito Civil</option>
+                                        <option value="Direito Penal">Direito Penal</option>
+                                        <option value="Direito Processual">Direito Processual</option>
+                                        <option value="Direito Tributário">Direito Tributário</option>
+                                        <option value="Contabilidade">Contabilidade</option>
+                                        <option value="Atualidades">Atualidades</option>
+                                        <option value="Conhecimentos Específicos">Conhecimentos Específicos</option>
+                                        <option value="custom">✏️ Digitar outra matéria...</option>
+                                    </select>
+                                </div>
+                                <input type="number" class="peso-input" min="1" max="5" value="3" placeholder="Peso">
+                                <input type="number" class="dificuldade-input" min="1" max="5" value="3" placeholder="Dificuldade">
+                                <input type="number" class="extensao-input" min="1" max="5" value="3" placeholder="Extensão">
+                                <button class="btn btn-danger" onclick="removerMateria(this)">❌</button>
+                            </div>
+                            <input type="text" class="materia-custom" placeholder="Digite o nome da matéria" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-secondary" onclick="adicionarMateria()" style="margin-top: 15px;">+ Adicionar Matéria</button>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="btn btn-primary" onclick="gerarCiclo()" style="font-size: 18px; padding: 15px 40px;">
+                    🚀 Gerar Meu Ciclo de Estudos
+                </button>
+            </div>
+            
+            <div id="resultado" class="resultado" style="display: none;">
+                <h2>🎯 Seu Ciclo de Estudos Personalizado</h2>
+                <div style="text-align: right; margin-bottom: 20px;">
+                    <button class="btn btn-secondary" onclick="imprimirCiclo()" style="background: #28a745;">
+                        🖨️ Imprimir Checklist
+                    </button>
+                </div>
+                <div id="resumoGeral"></div>
+                
+                <div style="background: white; border-radius: 10px; padding: 30px; margin: 20px 0; color: #333;">
+                    <h3 style="color: #6c757d; text-align: center; margin-bottom: 30px;">📊 Distribuição das Matérias</h3>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap;">
+                        <canvas id="graficoPizza" width="300" height="300" style="border-radius: 10px;"></canvas>
+                        <div id="legendaGrafico" style="max-width: 250px;"></div>
+                    </div>
+                </div>
+                
+                <div id="cicloDetalhado" class="ciclo-resultado"></div>
+                <div id="instrucoes" style="margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                    <h3>📋 Como usar seu ciclo:</h3>
+                    <ul style="margin-top: 10px; padding-left: 20px;">
+                        <li>Siga a ordem das matérias sempre</li>
+                        <li>Cada matéria tem seu tempo total semanal calculado</li>
+                        <li>Se não terminar o tempo da matéria na sessão, continue no próximo dia</li>
+                        <li>Se terminar antes do tempo da sessão, vá para a próxima matéria</li>
+                        <li>Quando completar todas as matérias do ciclo, comece novamente</li>
+                        <li>Nunca tire uma matéria do ciclo, apenas ajuste os tempos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function adicionarMateria() {
+            var materiasList = document.getElementById('materiasList');
+            var novaMateria = document.createElement('div');
+            novaMateria.className = 'materia-item';
+            
+            var html = '<div class="materia-row">' +
+                '<div>' +
+                '<select class="materia-select" onchange="toggleCustomInput(this)">' +
+                '<option value="">Selecione uma matéria</option>' +
+                '<option value="Português">Português</option>' +
+                '<option value="Direito Constitucional">Direito Constitucional</option>' +
+                '<option value="Direito Administrativo">Direito Administrativo</option>' +
+                '<option value="Raciocínio Lógico">Raciocínio Lógico</option>' +
+                '<option value="Matemática">Matemática</option>' +
+                '<option value="Informática">Informática</option>' +
+                '<option value="Direito Civil">Direito Civil</option>' +
+                '<option value="Direito Penal">Direito Penal</option>' +
+                '<option value="Direito Processual">Direito Processual</option>' +
+                '<option value="Direito Tributário">Direito Tributário</option>' +
+                '<option value="Contabilidade">Contabilidade</option>' +
+                '<option value="Atualidades">Atualidades</option>' +
+                '<option value="Conhecimentos Específicos">Conhecimentos Específicos</option>' +
+                '<option value="custom">✏️ Digitar outra matéria...</option>' +
+                '</select>' +
+                '</div>' +
+                '<input type="number" class="peso-input" min="1" max="5" value="3" placeholder="Peso">' +
+                '<input type="number" class="dificuldade-input" min="1" max="5" value="3" placeholder="Dificuldade">' +
+                '<input type="number" class="extensao-input" min="1" max="5" value="3" placeholder="Extensão">' +
+                '<button class="btn btn-danger" onclick="removerMateria(this)">❌</button>' +
+                '</div>' +
+                '<input type="text" class="materia-custom" placeholder="Digite o nome da matéria" style="display: none;">';
+            
+            novaMateria.innerHTML = html;
+            materiasList.appendChild(novaMateria);
+        }
+
+        function toggleCustomInput(selectElement) {
+            var materiaItem = selectElement.closest('.materia-item');
+            var customInput = materiaItem.querySelector('.materia-custom');
+            
+            if (selectElement.value === 'custom') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+                customInput.value = '';
+            }
+        }
+
+        function removerMateria(button) {
+            var materiasList = document.getElementById('materiasList');
+            if (materiasList.children.length > 1) {
+                button.closest('.materia-item').remove();
+            } else {
+                alert('Você precisa ter pelo menos uma matéria!');
+            }
+        }
+
+        function gerarCiclo() {
+            var tempoSemana = parseFloat(document.getElementById('tempoSemana').value) || 0;
+            var tempoSabado = parseFloat(document.getElementById('tempoSabado').value) || 0;
+            var tempoDomingo = parseFloat(document.getElementById('tempoDomingo').value) || 0;
+            var nivelFoco = parseInt(document.getElementById('nivelFoco').value);
+            
+            var tempoTotalSemanal = (tempoSemana * 5) + tempoSabado + tempoDomingo;
+            var minutosSemanais = tempoTotalSemanal * 60;
+            
+            var materias = [];
+            var materiasItems = document.querySelectorAll('.materia-item');
+            
+            for (var i = 0; i < materiasItems.length; i++) {
+                var item = materiasItems[i];
+                var select = item.querySelector('.materia-select');
+                var customInput = item.querySelector('.materia-custom');
+                var peso = parseInt(item.querySelector('.peso-input')?.value) || 3;
+                var dificuldade = parseInt(item.querySelector('.dificuldade-input')?.value) || 3;
+                var extensao = parseInt(item.querySelector('.extensao-input')?.value) || 3;
+                
+                var nomeMateria = '';
+                if (select && select.value) {
+                    if (select.value === 'custom') {
+                        nomeMateria = customInput && customInput.value ? customInput.value.trim() : '';
+                    } else {
+                        nomeMateria = select.value;
+                    }
+                }
+                
+                if (nomeMateria) {
+                    var prioridade = peso * 0.4 + dificuldade * 0.3 + extensao * 0.3;
+                    materias.push({
+                        nome: nomeMateria,
+                        peso: peso,
+                        dificuldade: dificuldade,
+                        extensao: extensao,
+                        prioridade: prioridade
+                    });
+                }
+            }
+            
+            if (materias.length === 0) {
+                alert('Adicione pelo menos uma matéria!');
+                return;
+            }
+            
+            var somaprioridades = materias.reduce(function(sum, m) { return sum + m.prioridade; }, 0);
+            
+            for (var j = 0; j < materias.length; j++) {
+                var materia = materias[j];
+                var proporcao = materia.prioridade / somaprioridades;
+                var minutosCalculados = minutosSemanais * proporcao;
+                
+                materia.minutosSemanais = Math.max(15, Math.round(minutosCalculados / 5) * 5);
+                materia.horasSemanais = (materia.minutosSemanais / 60).toFixed(1);
+                materia.minutosRestantes = materia.minutosSemanais;
+                
+                var importanciaGeral = (materia.peso * 0.6) + (materia.dificuldade * 0.25) + (materia.extensao * 0.15);
+                materia.importanciaGeral = importanciaGeral;
+            }
+            
+            var ciclo = gerarCicloSequencial(materias);
+            exibirResultados(materias, ciclo, tempoTotalSemanal, nivelFoco);
+        }
+        
+        function gerarCicloSequencial(materias) {
+            var listaExpandida = [];
+            
+            for (var i = 0; i < materias.length; i++) {
+                var materia = materias[i];
+                var minutosporSessao = Math.min(60, Math.max(30, Math.round(materia.minutosSemanais / 4)));
+                var numeroSessoes = Math.ceil(materia.minutosSemanais / minutosporSessao);
+                
+                for (var j = 0; j < numeroSessoes; j++) {
+                    var minutosRestantes = materia.minutosSemanais - (j * minutosporSessao);
+                    var minutosNestaSessao = Math.min(minutosporSessao, minutosRestantes);
+                    var minutosArredondados = Math.round(minutosNestaSessao / 5) * 5;
+                    
+                    if (minutosArredondados > 0) {
+                        listaExpandida.push({
+                            nome: materia.nome,
+                            dificuldade: materia.dificuldade,
+                            prioridade: materia.prioridade,
+                            importanciaGeral: materia.importanciaGeral,
+                            minutosNecessarios: minutosArredondados,
+                            sessaoNumero: j + 1,
+                            totalSessoes: numeroSessoes
+                        });
+                    }
+                }
+            }
+            
+            listaExpandida.sort(function(a, b) { return b.importanciaGeral - a.importanciaGeral; });
+            
+            var cicloFinal = [];
+            var itensRestantes = listaExpandida.slice();
+            
+            while (itensRestantes.length > 0) {
+                var proximoItem = null;
+                var melhorIndice = -1;
+                
+                var ultimoNome = cicloFinal.length > 0 ? cicloFinal[cicloFinal.length - 1].nome : null;
+                var itensValidos = itensRestantes.filter(function(item) { return item.nome !== ultimoNome; });
+                var listaParaEscolher = itensValidos.length > 0 ? itensValidos : itensRestantes;
+                
+                for (var k = 0; k < listaParaEscolher.length; k++) {
+                    var item = listaParaEscolher[k];
+                    var indiceReal = itensRestantes.indexOf(item);
+                    
+                    var ultimaPosicao = -1;
+                    for (var l = cicloFinal.length - 1; l >= 0; l--) {
+                        if (cicloFinal[l].nome === item.nome) {
+                            ultimaPosicao = l;
+                            break;
+                        }
+                    }
+                    
+                    var intervaloAtual = ultimaPosicao === -1 ? 999 : cicloFinal.length - ultimaPosicao;
+                    var intervaloIdeal;
+                    
+                    if (item.importanciaGeral >= 4.7) {
+                        intervaloIdeal = 3;
+                    } else if (item.importanciaGeral >= 4.2) {
+                        intervaloIdeal = 4;
+                    } else if (item.importanciaGeral >= 3.5) {
+                        intervaloIdeal = 5;
+                    } else if (item.importanciaGeral >= 2.5) {
+                        intervaloIdeal = 6;
+                    } else {
+                        intervaloIdeal = 7;
+                    }
+                    
+                    if (intervaloAtual >= intervaloIdeal || ultimaPosicao === -1) {
+                        if (!proximoItem || item.importanciaGeral > proximoItem.importanciaGeral) {
+                            proximoItem = item;
+                            melhorIndice = indiceReal;
+                        }
+                    }
+                }
+                
+                if (!proximoItem && listaParaEscolher.length > 0) {
+                    proximoItem = listaParaEscolher[0];
+                    melhorIndice = itensRestantes.indexOf(proximoItem);
+                }
+                
+                if (!proximoItem) {
+                    proximoItem = itensRestantes[0];
+                    melhorIndice = 0;
+                }
+                
+                cicloFinal.push(proximoItem);
+                itensRestantes.splice(melhorIndice, 1);
+            }
+            
+            return cicloFinal;
+        }
+        
+        function exibirResultados(materias, ciclo, tempoTotal, nivelFoco) {
+            var resultado = document.getElementById('resultado');
+            var resumoGeral = document.getElementById('resumoGeral');
+            var cicloDetalhado = document.getElementById('cicloDetalhado');
+            
+            var resumoHtml = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">' +
+                '<div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; text-align: center;">' +
+                '<h3>📚 Total de Matérias</h3>' +
+                '<p style="font-size: 1.5em; font-weight: bold;">' + materias.length + '</p>' +
+                '</div>' +
+                '<div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; text-align: center;">' +
+                '<h3>🎯 Sessões no Ciclo</h3>' +
+                '<p style="font-size: 1.5em; font-weight: bold;">' + ciclo.length + '</p>' +
+                '</div>' +
+                '<div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; text-align: center;">' +
+                '<h3>⏰ Seu Nível de Foco</h3>' +
+                '<p style="font-size: 1.5em; font-weight: bold;">' + nivelFoco + ' min</p>' +
+                '</div>' +
+                '</div>';
+            
+            resumoGeral.innerHTML = resumoHtml;
+            
+            var cicloHtml = '<h3>📅 Seu Ciclo de Estudos (siga esta ordem):</h3>';
+            cicloHtml += '<p style="margin-bottom: 20px; color: #666;">Cada item é uma sessão de estudo. Complete o tempo necessário de cada matéria antes de passar para a próxima.</p>';
+            
+            function getEmojiDificuldade(importanciaGeral) {
+                if (importanciaGeral >= 4.7) return '🔴';
+                if (importanciaGeral >= 4.2) return '🟠';
+                if (importanciaGeral >= 3.5) return '🟡';
+                if (importanciaGeral >= 2.5) return '🟢';
+                return '🔵';
+            }
+            
+            for (var i = 0; i < ciclo.length; i++) {
+                var sessao = ciclo[i];
+                var emoji = getEmojiDificuldade(sessao.importanciaGeral);
+                
+                cicloHtml += '<div class="ciclo-item">' +
+                    '<div>' +
+                    '<span style="background: #6c757d; color: white; padding: 4px 8px; border-radius: 15px; font-size: 12px; margin-right: 10px;">' +
+                    (i + 1) +
+                    '</span>' +
+                    '<span style="font-size: 16px; margin-right: 8px;">' + emoji + '</span>' +
+                    '<span class="materia-nome">' + sessao.nome + '</span>' +
+                    '<span style="color: #666; font-size: 14px; margin-left: 10px;">' +
+                    '(' + sessao.sessaoNumero + '/' + sessao.totalSessoes + ')' +
+                    '</span>' +
+                    '</div>' +
+                    '<div class="tempo-info">' +
+                    '<span>⏱️ ' + sessao.minutosNecessarios + ' min</span>' +
+                    '<span>🎯 Importância: ' + sessao.importanciaGeral.toFixed(1) + '</span>' +
+                    '</div>' +
+                    '</div>';
+            }
+            
+            cicloHtml += '<div style="margin-top: 20px;"><h4>📊 Resumo por Matéria:</h4>';
+            
+            for (var j = 0; j < materias.length; j++) {
+                var materia = materias[j];
+                var sessoesDaMateria = ciclo.filter(function(s) { return s.nome === materia.nome; }).length;
+                var maxMinutos = Math.max.apply(Math, materias.map(function(m) { return m.minutosSemanais; }));
+                
+                cicloHtml += '<div style="margin: 10px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">' +
+                    '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+                    '<strong>' + materia.nome + '</strong>' +
+                    '<span>' + materia.horasSemanais + 'h/semana (' + sessoesDaMateria + ' sessões)</span>' +
+                    '</div>' +
+                    '<div class="progress-bar">' +
+                    '<div class="progress-fill" style="width: ' + ((materia.minutosSemanais / maxMinutos) * 100) + '%"></div>' +
+                    '</div>' +
+                    '<div style="font-size: 12px; color: #666; margin-top: 5px;">' +
+                    'Peso: ' + materia.peso + ' | Dificuldade: ' + materia.dificuldade + ' | Extensão: ' + materia.extensao +
+                    '</div>' +
+                    '</div>';
+            }
+            
+            cicloHtml += '</div>';
+            cicloDetalhado.innerHTML = cicloHtml;
+            
+            gerarGraficoPizza(materias);
+            
+            resultado.style.display = 'block';
+            resultado.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function gerarGraficoPizza(materias) {
+            var canvas = document.getElementById('graficoPizza');
+            var ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            var centerX = canvas.width / 2;
+            var centerY = canvas.height / 2;
+            var radius = Math.min(centerX, centerY) - 20;
+            
+            var cores = [
+                '#6c757d', '#adb5bd', '#495057', '#868e96', 
+                '#dee2e6', '#ced4da', '#f8f9fa', '#e9ecef',
+                '#6c757d', '#adb5bd', '#495057', '#868e96',
+                '#dee2e6', '#ced4da'
+            ];
+            
+            var total = materias.reduce(function(sum, m) { return sum + m.minutosSemanais; }, 0);
+            var anguloAtual = -Math.PI / 2;
+            
+            for (var i = 0; i < materias.length; i++) {
+                var materia = materias[i];
+                var porcentagem = materia.minutosSemanais / total;
+                var angulo = porcentagem * 2 * Math.PI;
+                
+                ctx.fillStyle = cores[i % cores.length];
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, anguloAtual, anguloAtual + angulo);
+                ctx.closePath();
+                ctx.fill();
+                
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                if (porcentagem > 0.08) {
+                    var textoAngulo = anguloAtual + angulo / 2;
+                    var textoX = centerX + Math.cos(textoAngulo) * (radius * 0.7);
+                    var textoY = centerY + Math.sin(textoAngulo) * (radius * 0.7);
+                    
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText((porcentagem * 100).toFixed(1) + '%', textoX, textoY);
+                }
+                
+                anguloAtual += angulo;
+            }
+            
+            var legendaHtml = '<div style="font-size: 14px;">';
+            for (var k = 0; k < materias.length; k++) {
+                var materia = materias[k];
+                var porcentagem = (materia.minutosSemanais / total * 100).toFixed(1);
+                legendaHtml += '<div style="display: flex; align-items: center; margin-bottom: 8px;">' +
+                    '<div style="width: 20px; height: 20px; background: ' + cores[k % cores.length] + '; margin-right: 10px; border-radius: 3px;"></div>' +
+                    '<span><strong>' + materia.nome + '</strong><br>' +
+                    '<small>' + materia.horasSemanais + 'h (' + porcentagem + '%)</small></span>' +
+                    '</div>';
+            }
+            legendaHtml += '</div>';
+            
+            document.getElementById('legendaGrafico').innerHTML = legendaHtml;
+        }
+        
+        function imprimirCiclo() {
+            var printWindow = window.open('', '_blank');
+            var cicloItems = document.querySelectorAll('.ciclo-item');
+            var checklistHtml = '';
+            
+            for (var i = 0; i < cicloItems.length; i++) {
+                var item = cicloItems[i];
+                var materiaTexto = item.querySelector('.materia-nome').textContent;
+                var tempoInfo = item.querySelector('.tempo-info span').textContent;
+                
+                checklistHtml += '<div style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">' +
+                    '<input type="checkbox" style="margin-right: 15px; transform: scale(1.2);">' +
+                    '<span style="font-weight: 500; margin-right: 10px;">' + (i + 1) + '.</span>' +
+                    '<span style="flex: 1;">' + materiaTexto + '</span>' +
+                    '<span style="color: #666; font-size: 12px;">' + tempoInfo + '</span>' +
+                    '</div>';
+            }
+            
+            printWindow.document.open();
+            printWindow.document.write('<!DOCTYPE html>');
+            printWindow.document.write('<html><head><title>Checklist - Ciclo de Estudos</title>');
+            printWindow.document.write('<style>body { font-family: Arial, sans-serif; margin: 20px; color: #333; line-height: 1.4; }');
+            printWindow.document.write('h1 { color: #6c757d; text-align: center; font-size: 24px; margin-bottom: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px; }');
+            printWindow.document.write('.checklist-container { max-width: 600px; margin: 0 auto; }');
+            printWindow.document.write('@media print { body { margin: 15px; } }</style></head><body>');
+            printWindow.document.write('<h1>📋 Meu Ciclo de Estudos - Checklist</h1>');
+            printWindow.document.write('<div class="checklist-container">' + checklistHtml + '</div>');
+            printWindow.document.write('<div style="margin-top: 30px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9;">');
+            printWindow.document.write('<h3 style="margin-top: 0; color: #6c757d;">Como usar:</h3>');
+            printWindow.document.write('<ul style="margin: 10px 0; padding-left: 20px; font-size: 14px;">');
+            printWindow.document.write('<li>Siga esta ordem sempre</li>');
+            printWindow.document.write('<li>Complete o tempo necessário de cada matéria</li>');
+            printWindow.document.write('<li>Se sobrar tempo na sessão, vá para a próxima</li>');
+            printWindow.document.write('<li>Se não der tempo, continue no próximo dia</li>');
+            printWindow.document.write('<li>Quando terminar tudo, recomece o ciclo</li>');
+            printWindow.document.write('</ul></div></body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+        
+        function atualizarTempoTotal() {
+            var tempoSemana = parseFloat(document.getElementById('tempoSemana').value) || 0;
+            var tempoSabado = parseFloat(document.getElementById('tempoSabado').value) || 0;
+            var tempoDomingo = parseFloat(document.getElementById('tempoDomingo').value) || 0;
+            
+            var total = (tempoSemana * 5) + tempoSabado + tempoDomingo;
+            document.getElementById('totalHoras').textContent = total.toFixed(1);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            var primeiraMateria = document.querySelector('.materia-select');
+            if (primeiraMateria) {
+                primeiraMateria.value = 'Português';
+                primeiraMateria.addEventListener('change', function() {
+                    toggleCustomInput(this);
+                });
+            }
+            
+            document.getElementById('tempoSemana').addEventListener('input', atualizarTempoTotal);
+            document.getElementById('tempoSabado').addEventListener('input', atualizarTempoTotal);
+            document.getElementById('tempoDomingo').addEventListener('input', atualizarTempoTotal);
+            
+            atualizarTempoTotal();
+        });
+    </script>
+</body>
+</html>
