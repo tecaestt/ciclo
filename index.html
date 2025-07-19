@@ -454,7 +454,7 @@
                 }
                 
                 if (nomeMateria) {
-                    var prioridade = peso * 0.4 + dificuldade * 0.3 + extensao * 0.3;
+var prioridade = Math.pow(peso, 1.5) * Math.pow(dificuldade, 1.2) * Math.pow(extensao, 1.1);
                     materias.push({
                         nome: nomeMateria,
                         peso: peso,
@@ -489,32 +489,82 @@
             exibirResultados(materias, ciclo, tempoTotalSemanal, nivelFoco);
         }
         
-        function gerarCicloSequencial(materias) {
-            var listaExpandida = [];
+       function gerarCicloSequencial(materias) {
+    var listaExpandida = [];
+    
+    // Expandir matérias em sessões (código atual mantido)
+    for (var i = 0; i < materias.length; i++) {
+        var materia = materias[i];
+        var minutosporSessao = Math.min(60, Math.max(30, Math.round(materia.minutosSemanais / 4)));
+        var numeroSessoes = Math.ceil(materia.minutosSemanais / minutosporSessao);
+        
+        for (var j = 0; j < numeroSessoes; j++) {
+            var minutosRestantes = materia.minutosSemanais - (j * minutosporSessao);
+            var minutosNestaSessao = Math.min(minutosporSessao, minutosRestantes);
+            var minutosArredondados = Math.round(minutosNestaSessao / 5) * 5;
             
-            for (var i = 0; i < materias.length; i++) {
-                var materia = materias[i];
-                var minutosporSessao = Math.min(60, Math.max(30, Math.round(materia.minutosSemanais / 4)));
-                var numeroSessoes = Math.ceil(materia.minutosSemanais / minutosporSessao);
-                
-                for (var j = 0; j < numeroSessoes; j++) {
-                    var minutosRestantes = materia.minutosSemanais - (j * minutosporSessao);
-                    var minutosNestaSessao = Math.min(minutosporSessao, minutosRestantes);
-                    var minutosArredondados = Math.round(minutosNestaSessao / 5) * 5;
-                    
-                    if (minutosArredondados > 0) {
-                        listaExpandida.push({
-                            nome: materia.nome,
-                            dificuldade: materia.dificuldade,
-                            prioridade: materia.prioridade,
-                            importanciaGeral: materia.importanciaGeral,
-                            minutosNecessarios: minutosArredondados,
-                            sessaoNumero: j + 1,
-                            totalSessoes: numeroSessoes
-                        });
-                    }
-                }
+            if (minutosArredondados > 0) {
+                listaExpandida.push({
+                    nome: materia.nome,
+                    importanciaGeral: materia.importanciaGeral,
+                    minutosNecessarios: minutosArredondados,
+                    sessaoNumero: j + 1,
+                    totalSessoes: numeroSessoes
+                });
             }
+        }
+    }
+    
+    // NOVA LÓGICA: Evitar repetições excessivas
+    var cicloFinal = [];
+    var itensRestantes = listaExpandida.slice();
+    var repeticoesSeguidas = 0;
+    var MAX_REPETICOES = 0; // Máximo 2 repetições seguidas
+    
+    while (itensRestantes.length > 0) {
+        var proximoItem = null;
+        var melhorIndice = -1;
+        
+        var ultimoNome = cicloFinal.length > 0 ? cicloFinal[cicloFinal.length - 1].nome : null;
+        
+        // Tentar encontrar item diferente do último
+        var itensDisponiveis = itensRestantes.filter(function(item) { 
+            return item.nome !== ultimoNome; 
+        });
+        
+        if (itensDisponiveis.length > 0) {
+            // Há opções sem repetir - escolher a mais importante
+            itensDisponiveis.sort(function(a, b) { 
+                return b.importanciaGeral - a.importanciaGeral; 
+            });
+            proximoItem = itensDisponiveis[0];
+            melhorIndice = itensRestantes.indexOf(proximoItem);
+            repeticoesSeguidas = 0;
+            
+        } else {
+            // Só sobrou a mesma matéria
+            if (repeticoesSeguidas < MAX_REPETICOES) {
+                // Permitir repetição limitada
+                proximoItem = itensRestantes[0];
+                melhorIndice = 0;
+                repeticoesSeguidas++;
+            } else {
+                // FECHAR CICLO! Sua solução implementada aqui
+                break; // Para de adicionar ao ciclo atual
+            }
+        }
+        
+        if (proximoItem) {
+            cicloFinal.push(proximoItem);
+            itensRestantes.splice(melhorIndice, 1);
+        }
+    }
+    
+    // Se sobrou alguma sessão, ela ficará para um próximo ciclo
+    // (você pode implementar lógica para mostrar "Ciclo 2" se quiser)
+    
+    return cicloFinal;
+}
             
             listaExpandida.sort(function(a, b) { return b.importanciaGeral - a.importanciaGeral; });
             
