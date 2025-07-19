@@ -434,7 +434,6 @@ function gerarCiclo() {
     
     var tempoTotalSemanal = (tempoSemana * 5) + tempoSabado + tempoDomingo;
     var minutosSemanais = tempoTotalSemanal * 60;
-    var sessoesPossiveis = Math.floor(minutosSemanais / nivelFoco);
     
     var materias = [];
     var materiasItems = document.querySelectorAll('.materia-item');
@@ -457,15 +456,31 @@ function gerarCiclo() {
         }
         
         if (nomeMateria) {
-            // USAR APENAS UMA FÓRMULA: importanciaGeral
+            // Calcular importância
             var importanciaGeral = (peso * 0.6) + (dificuldade * 0.25) + (extensao * 0.15);
+            
+            // Calcular tempo por sessão baseado na importância
+            var tempoPorSessao;
+            if (importanciaGeral >= 4.5) {
+                tempoPorSessao = Math.min(90, nivelFoco * 1.6); // Muito importante: até 90min
+            } else if (importanciaGeral >= 3.5) {
+                tempoPorSessao = Math.round(nivelFoco * 1.2); // Importante: 20% mais que o base
+            } else if (importanciaGeral >= 2.5) {
+                tempoPorSessao = nivelFoco; // Médio: tempo base
+            } else {
+                tempoPorSessao = Math.max(25, Math.round(nivelFoco * 0.7)); // Baixo: 70% do base
+            }
+            
+            // Arredondar para múltiplos de 5
+            tempoPorSessao = Math.round(tempoPorSessao / 5) * 5;
             
             materias.push({
                 nome: nomeMateria,
                 peso: peso,
                 dificuldade: dificuldade,
                 extensao: extensao,
-                importanciaGeral: importanciaGeral
+                importanciaGeral: importanciaGeral,
+                tempoPorSessao: tempoPorSessao
             });
         }
     }
@@ -475,42 +490,22 @@ function gerarCiclo() {
         return;
     }
     
-    // NOVA LÓGICA: Distribuir SESSÕES diretamente
+    // Distribuir TEMPO SEMANAL baseado na importância
     var somaImportancia = materias.reduce(function(sum, m) { 
         return sum + m.importanciaGeral; 
     }, 0);
     
-    var sessoesTotais = 0;
-    var frequenciaMinima = 2; // Mínimo 2 sessões por matéria
-    
     for (var j = 0; j < materias.length; j++) {
         var materia = materias[j];
         var proporcao = materia.importanciaGeral / somaImportancia;
-        var sessoesCalculadas = Math.round(proporcao * sessoesPossiveis);
+        var minutosDestinados = minutosSemanais * proporcao;
         
-        // Aplicar limites
-        materia.sessoes = Math.max(frequenciaMinima, Math.min(Math.floor(sessoesPossiveis/2), sessoesCalculadas));
-        sessoesTotais += materia.sessoes;
+        // AQUI: Dividir tempo destinado pelo tempo por sessão = número de sessões
+        var numeroSessoes = Math.max(1, Math.round(minutosDestinados / materia.tempoPorSessao));
         
-        // Calcular tempo real baseado nas sessões
-        materia.tempoRealSemanal = materia.sessoes * nivelFoco;
-        materia.horasSemanais = (materia.tempoRealSemanal / 60).toFixed(1);
-        materia.minutosSemanais = materia.tempoRealSemanal; // Para compatibilidade
-    }
-    
-    // Ajustar se passou do limite
-    if (sessoesTotais > sessoesPossiveis) {
-        var fatorAjuste = sessoesPossiveis / sessoesTotais;
-        sessoesTotais = 0;
-        
-        for (var k = 0; k < materias.length; k++) {
-            var materia = materias[k];
-            materia.sessoes = Math.max(frequenciaMinima, Math.round(materia.sessoes * fatorAjuste));
-            materia.tempoRealSemanal = materia.sessoes * nivelFoco;
-            materia.horasSemanais = (materia.tempoRealSemanal / 60).toFixed(1);
-            materia.minutosSemanais = materia.tempoRealSemanal;
-            sessoesTotais += materia.sessoes;
-        }
+        materia.sessoes = numeroSessoes;
+        materia.minutosSemanais = numeroSessoes * materia.tempoPorSessao;
+        materia.horasSemanais = (materia.minutosSemanais / 60).toFixed(1);
     }
     
     var ciclo = gerarCicloSequencial(materias);
@@ -518,120 +513,99 @@ function gerarCiclo() {
 }
 
 function gerarCicloSequencial(materias) {
+    // Criar lista com a QUANTIDADE CORRETA de cada matéria
     var listaExpandida = [];
     
-    // Expandir matérias em sessões
     for (var i = 0; i < materias.length; i++) {
         var materia = materias[i];
         
+        // Adicionar TODAS as sessões desta matéria
         for (var j = 0; j < materia.sessoes; j++) {
             listaExpandida.push({
                 nome: materia.nome,
                 dificuldade: materia.dificuldade,
                 importanciaGeral: materia.importanciaGeral,
-                minutosNecessarios: parseInt(document.getElementById('nivelFoco')?.value) || 45,
+                minutosNecessarios: materia.tempoPorSessao,
                 sessaoNumero: j + 1,
                 totalSessoes: materia.sessoes
             });
         }
     }
     
-    // Ordenar por importância
-    listaExpandida.sort(function(a, b) { 
-        return b.importanciaGeral - a.importanciaGeral; 
-    });
-    
-    // NOVA LÓGICA: Intercalação INTELIGENTE com flexibilidade
+    // INTERCALAÇÃO PROPORCIONAL: matérias importantes aparecem mais
     var cicloFinal = [];
-    var itensRestantes = listaExpandida.slice();
+    var sessoesPendentes = listaExpandida.slice();
+    var contadores = {};
     
-    while (itensRestantes.length > 0) {
-        var proximoItem = null;
+    // Inicializar contadores
+    for (var k = 0; k < materias.length; k++) {
+        contadores[materias[k].nome] = 0;
+    }
+    
+    while (sessoesPendentes.length > 0) {
+        var melhorMateria = null;
+        var melhorRatio = -1;
         var melhorIndice = -1;
         
         var ultimoNome = cicloFinal.length > 0 ? cicloFinal[cicloFinal.length - 1].nome : null;
         
-        // Procurar item diferente do último
-        var itensDisponiveis = itensRestantes.filter(function(item) { 
-            return item.nome !== ultimoNome; 
-        });
-        
-        if (itensDisponiveis.length > 0) {
-            // Encontrou opção sem repetir - escolher baseado em prioridade e intervalo
-            for (var k = 0; k < itensDisponiveis.length; k++) {
-                var item = itensDisponiveis[k];
-                var indiceReal = itensRestantes.indexOf(item);
-                
-                // Calcular última posição desta matéria
-                var ultimaPosicao = -1;
-                for (var l = cicloFinal.length - 1; l >= 0; l--) {
-                    if (cicloFinal[l].nome === item.nome) {
-                        ultimaPosicao = l;
-                        break;
-                    }
-                }
-                
-                var intervaloAtual = ultimaPosicao === -1 ? 999 : cicloFinal.length - ultimaPosicao;
-                
-                // Definir intervalo ideal baseado na importância (FLEXÍVEL)
-                var intervaloIdeal;
-                if (item.importanciaGeral >= 4.5) {
-                    intervaloIdeal = 2; // Alta importância: a cada 2-3 sessões
-                } else if (item.importanciaGeral >= 3.5) {
-                    intervaloIdeal = 3; // Média importância: a cada 3-4 sessões  
-                } else if (item.importanciaGeral >= 2.5) {
-                    intervaloIdeal = 4; // Baixa importância: a cada 4-5 sessões
-                } else {
-                    intervaloIdeal = 5; // Muito baixa: a cada 5-6 sessões
-                }
-                
-                // Verificar se é hora de aparecer OU se é a mais importante disponível
-                if (intervaloAtual >= intervaloIdeal || ultimaPosicao === -1) {
-                    if (!proximoItem || item.importanciaGeral > proximoItem.importanciaGeral) {
-                        proximoItem = item;
-                        melhorIndice = indiceReal;
-                    }
-                }
-            }
+        // Procurar a matéria que está mais "atrasada" proporcionalmente
+        for (var l = 0; l < materias.length; l++) {
+            var materia = materias[l];
             
-            // Se não encontrou por intervalo, pegar a mais importante disponível
-            if (!proximoItem) {
-                itensDisponiveis.sort(function(a, b) { 
-                    return b.importanciaGeral - a.importanciaGeral; 
-                });
-                proximoItem = itensDisponiveis[0];
-                melhorIndice = itensRestantes.indexOf(proximoItem);
-            }
-            
-        } else {
-            // Só sobrou a mesma matéria - PERMITIR até 2 repetições
-            var repeticoesSeguidas = 0;
-            for (var m = cicloFinal.length - 1; m >= 0; m--) {
-                if (cicloFinal[m].nome === ultimoNome) {
-                    repeticoesSeguidas++;
-                } else {
+            // Verificar se ainda tem sessões desta matéria
+            var indiceSessao = -1;
+            for (var m = 0; m < sessoesPendentes.length; m++) {
+                if (sessoesPendentes[m].nome === materia.nome) {
+                    indiceSessao = m;
                     break;
                 }
             }
             
-            if (repeticoesSeguidas < 2) {
-                // Permitir repetição (máximo 2 seguidas)
-                proximoItem = itensRestantes[0];
-                melhorIndice = 0;
-            } else {
-                // Já repetiu 2 vezes - fechar ciclo
-                break;
+            if (indiceSessao === -1) continue; // Não tem mais sessões desta matéria
+            
+            // Evitar repetir a anterior se possível
+            if (materia.nome === ultimoNome && sessoesPendentes.length > 1) {
+                var outrasDisponiveis = false;
+                for (var n = 0; n < sessoesPendentes.length; n++) {
+                    if (sessoesPendentes[n].nome !== ultimoNome) {
+                        outrasDisponiveis = true;
+                        break;
+                    }
+                }
+                if (outrasDisponiveis) continue;
+            }
+            
+            // Calcular ratio: quantas sessões deveria ter feito vs quantas fez
+            var sessoesDeveriaFazer = (cicloFinal.length + 1) * (materia.sessoes / listaExpandida.length);
+            var sessoesJaFez = contadores[materia.nome];
+            var ratio = sessoesDeveriaFazer - sessoesJaFez;
+            
+            if (ratio > melhorRatio) {
+                melhorRatio = ratio;
+                melhorMateria = materia.nome;
+                melhorIndice = indiceSessao;
             }
         }
         
-        if (proximoItem) {
-            cicloFinal.push(proximoItem);
-            itensRestantes.splice(melhorIndice, 1);
+        // Adicionar a sessão escolhida
+        if (melhorIndice >= 0) {
+            var sessaoEscolhida = sessoesPendentes[melhorIndice];
+            cicloFinal.push(sessaoEscolhida);
+            contadores[melhorMateria]++;
+            sessoesPendentes.splice(melhorIndice, 1);
+        } else {
+            // Fallback: pegar qualquer uma disponível
+            cicloFinal.push(sessoesPendentes[0]);
+            contadores[sessoesPendentes[0].nome]++;
+            sessoesPendentes.splice(0, 1);
         }
     }
     
     return cicloFinal;
 }
+
+
         function exibirResultados(materias, ciclo, tempoTotal, nivelFoco) {
             var resultado = document.getElementById('resultado');
             var resumoGeral = document.getElementById('resumoGeral');
