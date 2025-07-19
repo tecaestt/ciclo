@@ -424,102 +424,125 @@
             }
         }
 
-        function gerarCiclo() {
-            var tempoSemana = parseFloat(document.getElementById('tempoSemana').value) || 0;
-            var tempoSabado = parseFloat(document.getElementById('tempoSabado').value) || 0;
-            var tempoDomingo = parseFloat(document.getElementById('tempoDomingo').value) || 0;
-            var nivelFoco = parseInt(document.getElementById('nivelFoco').value);
-            
-            var tempoTotalSemanal = (tempoSemana * 5) + tempoSabado + tempoDomingo;
-            var minutosSemanais = tempoTotalSemanal * 60;
-            
-            var materias = [];
-            var materiasItems = document.querySelectorAll('.materia-item');
-            
-            for (var i = 0; i < materiasItems.length; i++) {
-                var item = materiasItems[i];
-                var select = item.querySelector('.materia-select');
-                var customInput = item.querySelector('.materia-custom');
-                var peso = parseInt(item.querySelector('.peso-input')?.value) || 3;
-                var dificuldade = parseInt(item.querySelector('.dificuldade-input')?.value) || 3;
-                var extensao = parseInt(item.querySelector('.extensao-input')?.value) || 3;
-                
-                var nomeMateria = '';
-                if (select && select.value) {
-                    if (select.value === 'custom') {
-                        nomeMateria = customInput && customInput.value ? customInput.value.trim() : '';
-                    } else {
-                        nomeMateria = select.value;
-                    }
-                }
-                
-                if (nomeMateria) {
-var prioridade = Math.pow(peso, 1.5) * Math.pow(dificuldade, 1.2) * Math.pow(extensao, 1.1);
-                    materias.push({
-                        nome: nomeMateria,
-                        peso: peso,
-                        dificuldade: dificuldade,
-                        extensao: extensao,
-                        prioridade: prioridade
-                    });
-                }
+       function gerarCiclo() {
+    var tempoSemana = parseFloat(document.getElementById('tempoSemana').value) || 0;
+    var tempoSabado = parseFloat(document.getElementById('tempoSabado').value) || 0;
+    var tempoDomingo = parseFloat(document.getElementById('tempoDomingo').value) || 0;
+    var nivelFoco = parseInt(document.getElementById('nivelFoco').value);
+    
+    var tempoTotalSemanal = (tempoSemana * 5) + tempoSabado + tempoDomingo;
+    var minutosSemanais = tempoTotalSemanal * 60;
+    var sessoesPossiveis = Math.floor(minutosSemanais / nivelFoco);
+    
+    var materias = [];
+    var materiasItems = document.querySelectorAll('.materia-item');
+    
+    for (var i = 0; i < materiasItems.length; i++) {
+        var item = materiasItems[i];
+        var select = item.querySelector('.materia-select');
+        var customInput = item.querySelector('.materia-custom');
+        var peso = parseInt(item.querySelector('.peso-input')?.value) || 3;
+        var dificuldade = parseInt(item.querySelector('.dificuldade-input')?.value) || 3;
+        var extensao = parseInt(item.querySelector('.extensao-input')?.value) || 3;
+        
+        var nomeMateria = '';
+        if (select && select.value) {
+            if (select.value === 'custom') {
+                nomeMateria = customInput && customInput.value ? customInput.value.trim() : '';
+            } else {
+                nomeMateria = select.value;
             }
-            
-            if (materias.length === 0) {
-                alert('Adicione pelo menos uma matéria!');
-                return;
-            }
-            
-            var somaprioridades = materias.reduce(function(sum, m) { return sum + m.prioridade; }, 0);
-            
-            for (var j = 0; j < materias.length; j++) {
-                var materia = materias[j];
-                var proporcao = materia.prioridade / somaprioridades;
-                var minutosCalculados = minutosSemanais * proporcao;
-                
-                materia.minutosSemanais = Math.max(15, Math.round(minutosCalculados / 5) * 5);
-                materia.horasSemanais = (materia.minutosSemanais / 60).toFixed(1);
-                materia.minutosRestantes = materia.minutosSemanais;
-                
-                var importanciaGeral = (materia.peso * 0.6) + (materia.dificuldade * 0.25) + (materia.extensao * 0.15);
-                materia.importanciaGeral = importanciaGeral;
-            }
-            
-            var ciclo = gerarCicloSequencial(materias);
-            exibirResultados(materias, ciclo, tempoTotalSemanal, nivelFoco);
         }
         
-       function gerarCicloSequencial(materias) {
-    var listaExpandida = [];
-    
-    // Expandir matérias em sessões (código atual mantido)
-    for (var i = 0; i < materias.length; i++) {
-        var materia = materias[i];
-        var minutosporSessao = Math.min(60, Math.max(30, Math.round(materia.minutosSemanais / 4)));
-        var numeroSessoes = Math.ceil(materia.minutosSemanais / minutosporSessao);
-        
-        for (var j = 0; j < numeroSessoes; j++) {
-            var minutosRestantes = materia.minutosSemanais - (j * minutosporSessao);
-            var minutosNestaSessao = Math.min(minutosporSessao, minutosRestantes);
-            var minutosArredondados = Math.round(minutosNestaSessao / 5) * 5;
+        if (nomeMateria) {
+            // USAR APENAS UMA FÓRMULA: importanciaGeral
+            var importanciaGeral = (peso * 0.6) + (dificuldade * 0.25) + (extensao * 0.15);
             
-            if (minutosArredondados > 0) {
-                listaExpandida.push({
-                    nome: materia.nome,
-                    importanciaGeral: materia.importanciaGeral,
-                    minutosNecessarios: minutosArredondados,
-                    sessaoNumero: j + 1,
-                    totalSessoes: numeroSessoes
-                });
-            }
+            materias.push({
+                nome: nomeMateria,
+                peso: peso,
+                dificuldade: dificuldade,
+                extensao: extensao,
+                importanciaGeral: importanciaGeral
+            });
         }
     }
     
-    // NOVA LÓGICA: Evitar repetições excessivas
+    if (materias.length === 0) {
+        alert('Adicione pelo menos uma matéria!');
+        return;
+    }
+    
+    // NOVA LÓGICA: Distribuir SESSÕES diretamente
+    var somaImportancia = materias.reduce(function(sum, m) { 
+        return sum + m.importanciaGeral; 
+    }, 0);
+    
+    var sessoesTotais = 0;
+    var frequenciaMinima = 2; // Mínimo 2 sessões por matéria
+    
+    for (var j = 0; j < materias.length; j++) {
+        var materia = materias[j];
+        var proporcao = materia.importanciaGeral / somaImportancia;
+        var sessoesCalculadas = Math.round(proporcao * sessoesPossiveis);
+        
+        // Aplicar limites
+        materia.sessoes = Math.max(frequenciaMinima, Math.min(Math.floor(sessoesPossiveis/2), sessoesCalculadas));
+        sessoesTotais += materia.sessoes;
+        
+        // Calcular tempo real baseado nas sessões
+        materia.tempoRealSemanal = materia.sessoes * nivelFoco;
+        materia.horasSemanais = (materia.tempoRealSemanal / 60).toFixed(1);
+        materia.minutosSemanais = materia.tempoRealSemanal; // Para compatibilidade
+    }
+    
+    // Ajustar se passou do limite
+    if (sessoesTotais > sessoesPossiveis) {
+        var fatorAjuste = sessoesPossiveis / sessoesTotais;
+        sessoesTotais = 0;
+        
+        for (var k = 0; k < materias.length; k++) {
+            var materia = materias[k];
+            materia.sessoes = Math.max(frequenciaMinima, Math.round(materia.sessoes * fatorAjuste));
+            materia.tempoRealSemanal = materia.sessoes * nivelFoco;
+            materia.horasSemanais = (materia.tempoRealSemanal / 60).toFixed(1);
+            materia.minutosSemanais = materia.tempoRealSemanal;
+            sessoesTotais += materia.sessoes;
+        }
+    }
+    
+    var ciclo = gerarCicloSequencial(materias);
+    exibirResultados(materias, ciclo, tempoTotalSemanal, nivelFoco);
+}
+
+function gerarCicloSequencial(materias) {
+    var listaExpandida = [];
+    
+    // Expandir matérias em sessões
+    for (var i = 0; i < materias.length; i++) {
+        var materia = materias[i];
+        
+        for (var j = 0; j < materia.sessoes; j++) {
+            listaExpandida.push({
+                nome: materia.nome,
+                dificuldade: materia.dificuldade,
+                importanciaGeral: materia.importanciaGeral,
+                minutosNecessarios: nivelFoco, // Usar o nível de foco padrão
+                sessaoNumero: j + 1,
+                totalSessoes: materia.sessoes
+            });
+        }
+    }
+    
+    // Ordenar por importância
+    listaExpandida.sort(function(a, b) { 
+        return b.importanciaGeral - a.importanciaGeral; 
+    });
+    
+    // NOVA LÓGICA: Evitar repetições com MAX_REPETICOES = 0
     var cicloFinal = [];
     var itensRestantes = listaExpandida.slice();
-    var repeticoesSeguidas = 0;
-    var MAX_REPETICOES = 0; // Máximo 2 repetições seguidas
+    var MAX_REPETICOES = 0; // ZERO repetições seguidas
     
     while (itensRestantes.length > 0) {
         var proximoItem = null;
@@ -527,31 +550,22 @@ var prioridade = Math.pow(peso, 1.5) * Math.pow(dificuldade, 1.2) * Math.pow(ext
         
         var ultimoNome = cicloFinal.length > 0 ? cicloFinal[cicloFinal.length - 1].nome : null;
         
-        // Tentar encontrar item diferente do último
+        // Procurar item diferente do último
         var itensDisponiveis = itensRestantes.filter(function(item) { 
             return item.nome !== ultimoNome; 
         });
         
         if (itensDisponiveis.length > 0) {
-            // Há opções sem repetir - escolher a mais importante
+            // Encontrou opção sem repetir - escolher a mais importante
             itensDisponiveis.sort(function(a, b) { 
                 return b.importanciaGeral - a.importanciaGeral; 
             });
             proximoItem = itensDisponiveis[0];
             melhorIndice = itensRestantes.indexOf(proximoItem);
-            repeticoesSeguidas = 0;
             
         } else {
-            // Só sobrou a mesma matéria
-            if (repeticoesSeguidas < MAX_REPETICOES) {
-                // Permitir repetição limitada
-                proximoItem = itensRestantes[0];
-                melhorIndice = 0;
-                repeticoesSeguidas++;
-            } else {
-                // FECHAR CICLO! Sua solução implementada aqui
-                break; // Para de adicionar ao ciclo atual
-            }
+            // Só sobrou a mesma matéria - com ZERO repetições, FECHA o ciclo!
+            break; // Para aqui e fecha o ciclo
         }
         
         if (proximoItem) {
@@ -560,77 +574,8 @@ var prioridade = Math.pow(peso, 1.5) * Math.pow(dificuldade, 1.2) * Math.pow(ext
         }
     }
     
-    // Se sobrou alguma sessão, ela ficará para um próximo ciclo
-    // (você pode implementar lógica para mostrar "Ciclo 2" se quiser)
-    
     return cicloFinal;
 }
-            
-            listaExpandida.sort(function(a, b) { return b.importanciaGeral - a.importanciaGeral; });
-            
-            var cicloFinal = [];
-            var itensRestantes = listaExpandida.slice();
-            
-            while (itensRestantes.length > 0) {
-                var proximoItem = null;
-                var melhorIndice = -1;
-                
-                var ultimoNome = cicloFinal.length > 0 ? cicloFinal[cicloFinal.length - 1].nome : null;
-                var itensValidos = itensRestantes.filter(function(item) { return item.nome !== ultimoNome; });
-                var listaParaEscolher = itensValidos.length > 0 ? itensValidos : itensRestantes;
-                
-                for (var k = 0; k < listaParaEscolher.length; k++) {
-                    var item = listaParaEscolher[k];
-                    var indiceReal = itensRestantes.indexOf(item);
-                    
-                    var ultimaPosicao = -1;
-                    for (var l = cicloFinal.length - 1; l >= 0; l--) {
-                        if (cicloFinal[l].nome === item.nome) {
-                            ultimaPosicao = l;
-                            break;
-                        }
-                    }
-                    
-                    var intervaloAtual = ultimaPosicao === -1 ? 999 : cicloFinal.length - ultimaPosicao;
-                    var intervaloIdeal;
-                    
-                    if (item.importanciaGeral >= 4.7) {
-                        intervaloIdeal = 3;
-                    } else if (item.importanciaGeral >= 4.2) {
-                        intervaloIdeal = 4;
-                    } else if (item.importanciaGeral >= 3.5) {
-                        intervaloIdeal = 5;
-                    } else if (item.importanciaGeral >= 2.5) {
-                        intervaloIdeal = 6;
-                    } else {
-                        intervaloIdeal = 7;
-                    }
-                    
-                    if (intervaloAtual >= intervaloIdeal || ultimaPosicao === -1) {
-                        if (!proximoItem || item.importanciaGeral > proximoItem.importanciaGeral) {
-                            proximoItem = item;
-                            melhorIndice = indiceReal;
-                        }
-                    }
-                }
-                
-                if (!proximoItem && listaParaEscolher.length > 0) {
-                    proximoItem = listaParaEscolher[0];
-                    melhorIndice = itensRestantes.indexOf(proximoItem);
-                }
-                
-                if (!proximoItem) {
-                    proximoItem = itensRestantes[0];
-                    melhorIndice = 0;
-                }
-                
-                cicloFinal.push(proximoItem);
-                itensRestantes.splice(melhorIndice, 1);
-            }
-            
-            return cicloFinal;
-        }
-        
         function exibirResultados(materias, ciclo, tempoTotal, nivelFoco) {
             var resultado = document.getElementById('resultado');
             var resumoGeral = document.getElementById('resumoGeral');
