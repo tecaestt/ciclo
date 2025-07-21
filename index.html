@@ -236,13 +236,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📚 Planilha Ciclo de Estudos</h1>
-            <p>Organize seus estudos como a Estéffani ensina</p>
+            <h1>📚 Simulador do ciclo de estudos</h1>
+            <p>Organize seus estudos rapidinho!</p>
         </div>
         
         <div class="content">
             <div class="section">
-                <h2 class="section-title">⏰ Sua Disponibilidade de Tempo</h2>
+                <h2 class="section-title">⏰ Sua disponibilidade de tempo</h2>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Segunda a Sexta (horas por dia):</label>
@@ -277,7 +277,7 @@
             <div class="section">
                 <h2 class="section-title">📖 Matérias do seu Edital</h2>
                 <div class="alert alert-info">
-                    <strong>Dica da Estéffani:</strong> Comece com 4-6 matérias no máximo. Vá adicionando conforme evolui!
+                    <strong>Dica:</strong> Comece com 4-6 matérias no máximo. Vá adicionando conforme evolui!
                 </div>
                 
                 <div class="materias-container">
@@ -297,19 +297,53 @@
                                 <div>
                                     <select class="materia-select" onchange="toggleCustomInput(this)">
                                         <option value="">Selecione uma matéria</option>
-                                        <option value="Português">Português</option>
-                                        <option value="Direito Constitucional">Direito Constitucional</option>
-                                        <option value="Direito Administrativo">Direito Administrativo</option>
-                                        <option value="Raciocínio Lógico">Raciocínio Lógico</option>
-                                        <option value="Matemática">Matemática</option>
-                                        <option value="Informática">Informática</option>
-                                        <option value="Direito Civil">Direito Civil</option>
-                                        <option value="Direito Penal">Direito Penal</option>
-                                        <option value="Direito Processual">Direito Processual</option>
-                                        <option value="Direito Tributário">Direito Tributário</option>
-                                        <option value="Contabilidade">Contabilidade</option>
-                                        <option value="Atualidades">Atualidades</option>
-                                        <option value="Conhecimentos Específicos">Conhecimentos Específicos</option>
+                                        <option value="Administração">Administração</option>
+<option value="Administração Pública">Administração Pública</option>
+<option value="Auditoria">Auditoria</option>
+<option value="Biologia">Biologia</option>
+<option value="Conhecimentos Específicos">Conhecimentos Específicos (conforme cargo)</option>
+<option value="Contabilidade">Contabilidade</option>
+<option value="Contabilidade Avançada">Contabilidade Avançada</option>
+<option value="Contabilidade Geral">Contabilidade Geral</option>
+<option value="Direito Administrativo">Direito Administrativo</option>
+<option value="Direito Constitucional">Direito Constitucional</option>
+<option value="Direito Internacional">Direito Internacional</option>
+<option value="Direito Penal">Direito Penal</option>
+<option value="Direito Processual Penal">Direito Processual Penal</option>
+<option value="Direito Tributário">Direito Tributário</option>
+<option value="Direitos Humanos">Direitos Humanos</option>
+<option value="Economia">Economia</option>
+<option value="Enfermagem">Enfermagem</option>
+<option value="Estatística">Estatística</option>
+<option value="Ética no Serviço Público">Ética no Serviço Público</option>
+<option value="Farmacêutico">Farmacêutico</option>
+<option value="Finanças Públicas">Finanças Públicas</option>
+<option value="Física">Física</option>
+<option value="Informática">Informática</option>
+<option value="Legislação Aduaneira">Legislação Aduaneira</option>
+<option value="Legislação de Trânsito">Legislação de Trânsito</option>
+<option value="Legislação Especial">Legislação Especial</option>
+<option value="Legislação Penal Especial">Legislação Penal Especial</option>
+<option value="Legislação Tributária Federal">Legislação Tributária Federal</option>
+<option value="Língua Estrangeira">Língua Estrangeira (Inglês ou Espanhol)</option>
+<option value="Língua Portuguesa">Língua Portuguesa</option>
+<option value="Matemática">Matemática</option>
+<option value="Matemática Financeira">Matemática Financeira</option>
+<option value="Medicina clínica">Medicina clínica</option>
+<option value="Medicina psiquiátrica">Medicina psiquiátrica</option>
+<option value="Noções de Arquivologia">Noções de Arquivologia</option>
+<option value="Nutrição">Nutrição</option>
+<option value="Primeiros Socorros">Primeiros Socorros</option>
+<option value="Psicologia Clínica">Psicologia Clínica</option>
+<option value="Psicologia Organizacional">Psicologia Organizacional</option>
+<option value="Química">Química</option>
+<option value="Raciocínio Lógico">Raciocínio Lógico</option>
+<option value="Raciocínio Lógico Quantitativo e Estatística">Raciocínio Lógico-Quantitativo e Estatística</option>
+<option value="Relações Econômicas Internacionais">Relações Econômicas Internacionais</option>
+<option value="Redação">Redação</option>
+<option value="Técnico em Assuntos Educacionais">Técnico em Assuntos Educacionais</option>
+<option value="Técnico em Comunicação">Técnico em Comunicação</option>
+
                                         <option value="custom">✏️ Digitar outra matéria...</option>
                                     </select>
                                 </div>
@@ -333,7 +367,7 @@
             </div>
             
             <div id="resultado" class="resultado" style="display: none;">
-                <h2>🎯 Seu Ciclo de Estudos Personalizado</h2>
+                <h2>🎯 Seu Ciclo de estudos personalizado</h2>
                 <div style="text-align: right; margin-bottom: 20px;">
                     <button class="btn btn-secondary" onclick="imprimirCiclo()" style="background: #28a745;">
                         🖨️ Imprimir Checklist
@@ -373,23 +407,39 @@
             
             var html = '<div class="materia-row">' +
                 '<div>' +
-                '<select class="materia-select" onchange="toggleCustomInput(this)">' +
-                '<option value="">Selecione uma matéria</option>' +
-                '<option value="Português">Português</option>' +
-                '<option value="Direito Constitucional">Direito Constitucional</option>' +
-                '<option value="Direito Administrativo">Direito Administrativo</option>' +
-                '<option value="Raciocínio Lógico">Raciocínio Lógico</option>' +
-                '<option value="Matemática">Matemática</option>' +
-                '<option value="Informática">Informática</option>' +
-                '<option value="Direito Civil">Direito Civil</option>' +
-                '<option value="Direito Penal">Direito Penal</option>' +
-                '<option value="Direito Processual">Direito Processual</option>' +
-                '<option value="Direito Tributário">Direito Tributário</option>' +
-                '<option value="Contabilidade">Contabilidade</option>' +
-                '<option value="Atualidades">Atualidades</option>' +
-                '<option value="Conhecimentos Específicos">Conhecimentos Específicos</option>' +
-                '<option value="custom">✏️ Digitar outra matéria...</option>' +
-                '</select>' +
+                '<select class="materia-select" onchange="toggleCustomInput(this)">
+  <option value="">Selecione uma matéria</option>
+  <option value="Administração">Administração</option>
+  <option value="Atualidades">Atualidades</option>
+  <option value="Contabilidade">Contabilidade</option>
+  <option value="Direito Administrativo">Direito Administrativo</option>
+  <option value="Direito Civil">Direito Civil</option>
+  <option value="Direito Constitucional">Direito Constitucional</option>
+  <option value="Direito Penal">Direito Penal</option>
+  <option value="Direito Processual">Direito Processual</option>
+  <option value="Direito Tributário">Direito Tributário</option>
+  <option value="Estatística">Estatística</option>
+  <option value="Ética no Serviço Público">Ética no Serviço Público</option>
+  <option value="Finanças Públicas">Finanças Públicas</option>
+  <option value="Geopolítica">Geopolítica</option>
+  <option value="Gestão de Pessoas">Gestão de Pessoas</option>
+  <option value="Informática">Informática</option>
+  <option value="Legislação Aplicada à PF/PRF">Legislação Aplicada à PF/PRF</option>
+  <option value="Língua Estrangeira (Inglês ou Espanhol)">Língua Estrangeira (Inglês ou Espanhol)</option>
+  <option value="Matemática">Matemática</option>
+  <option value="Noções de Administração Pública">Noções de Administração Pública</option>
+  <option value="Noções de Arquivologia">Noções de Arquivologia</option>
+  <option value="Noções de Direito Humanos">Noções de Direitos Humanos</option>
+  <option value="Noções de Economia">Noções de Economia</option>
+  <option value="Noções de Gestão de Pessoas">Noções de Gestão de Pessoas</option>
+  <option value="Português">Português</option>
+  <option value="Raciocínio Lógico">Raciocínio Lógico</option>
+  <option value="Redação Oficial">Redação Oficial</option>
+  <option value="Segurança Pública">Segurança Pública</option>
+  <option value="Sociologia">Sociologia</option>
+  <option value="custom">✏️ Digitar outra matéria...</option>
+</select>
+' +
                 '</div>' +
                 '<input type="number" class="peso-input" min="1" max="5" value="3" placeholder="Peso">' +
                 '<input type="number" class="dificuldade-input" min="1" max="5" value="3" placeholder="Dificuldade">' +
