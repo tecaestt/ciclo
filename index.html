@@ -407,39 +407,23 @@
             
             var html = '<div class="materia-row">' +
                 '<div>' +
-                '<select class="materia-select" onchange="toggleCustomInput(this)">
-  <option value="">Selecione uma matéria</option>
-  <option value="Administração">Administração</option>
-  <option value="Atualidades">Atualidades</option>
-  <option value="Contabilidade">Contabilidade</option>
-  <option value="Direito Administrativo">Direito Administrativo</option>
-  <option value="Direito Civil">Direito Civil</option>
-  <option value="Direito Constitucional">Direito Constitucional</option>
-  <option value="Direito Penal">Direito Penal</option>
-  <option value="Direito Processual">Direito Processual</option>
-  <option value="Direito Tributário">Direito Tributário</option>
-  <option value="Estatística">Estatística</option>
-  <option value="Ética no Serviço Público">Ética no Serviço Público</option>
-  <option value="Finanças Públicas">Finanças Públicas</option>
-  <option value="Geopolítica">Geopolítica</option>
-  <option value="Gestão de Pessoas">Gestão de Pessoas</option>
-  <option value="Informática">Informática</option>
-  <option value="Legislação Aplicada à PF/PRF">Legislação Aplicada à PF/PRF</option>
-  <option value="Língua Estrangeira (Inglês ou Espanhol)">Língua Estrangeira (Inglês ou Espanhol)</option>
-  <option value="Matemática">Matemática</option>
-  <option value="Noções de Administração Pública">Noções de Administração Pública</option>
-  <option value="Noções de Arquivologia">Noções de Arquivologia</option>
-  <option value="Noções de Direito Humanos">Noções de Direitos Humanos</option>
-  <option value="Noções de Economia">Noções de Economia</option>
-  <option value="Noções de Gestão de Pessoas">Noções de Gestão de Pessoas</option>
-  <option value="Português">Português</option>
-  <option value="Raciocínio Lógico">Raciocínio Lógico</option>
-  <option value="Redação Oficial">Redação Oficial</option>
-  <option value="Segurança Pública">Segurança Pública</option>
-  <option value="Sociologia">Sociologia</option>
-  <option value="custom">✏️ Digitar outra matéria...</option>
-</select>
-' +
+                '<select class="materia-select" onchange="toggleCustomInput(this)">' +
+                '<option value="">Selecione uma matéria</option>' +
+                '<option value="Português">Português</option>' +
+                '<option value="Direito Constitucional">Direito Constitucional</option>' +
+                '<option value="Direito Administrativo">Direito Administrativo</option>' +
+                '<option value="Raciocínio Lógico">Raciocínio Lógico</option>' +
+                '<option value="Matemática">Matemática</option>' +
+                '<option value="Informática">Informática</option>' +
+                '<option value="Direito Civil">Direito Civil</option>' +
+                '<option value="Direito Penal">Direito Penal</option>' +
+                '<option value="Direito Processual">Direito Processual</option>' +
+                '<option value="Direito Tributário">Direito Tributário</option>' +
+                '<option value="Contabilidade">Contabilidade</option>' +
+                '<option value="Atualidades">Atualidades</option>' +
+                '<option value="Conhecimentos Específicos">Conhecimentos Específicos</option>' +
+                '<option value="custom">✏️ Digitar outra matéria...</option>' +
+                '</select>' +
                 '</div>' +
                 '<input type="number" class="peso-input" min="1" max="5" value="3" placeholder="Peso">' +
                 '<input type="number" class="dificuldade-input" min="1" max="5" value="3" placeholder="Dificuldade">' +
