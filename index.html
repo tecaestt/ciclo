@@ -400,41 +400,61 @@
     </div>
 
     <script>
-        function adicionarMateria() {
-            var materiasList = document.getElementById('materiasList');
-            var novaMateria = document.createElement('div');
-            novaMateria.className = 'materia-item';
-            
-            var html = '<div class="materia-row">' +
-                '<div>' +
-                '<select class="materia-select" onchange="toggleCustomInput(this)">' +
-                '<option value="">Selecione uma matéria</option>' +
-                '<option value="Português">Português</option>' +
-                '<option value="Direito Constitucional">Direito Constitucional</option>' +
-                '<option value="Direito Administrativo">Direito Administrativo</option>' +
-                '<option value="Raciocínio Lógico">Raciocínio Lógico</option>' +
-                '<option value="Matemática">Matemática</option>' +
-                '<option value="Informática">Informática</option>' +
-                '<option value="Direito Civil">Direito Civil</option>' +
-                '<option value="Direito Penal">Direito Penal</option>' +
-                '<option value="Direito Processual">Direito Processual</option>' +
-                '<option value="Direito Tributário">Direito Tributário</option>' +
-                '<option value="Contabilidade">Contabilidade</option>' +
-                '<option value="Atualidades">Atualidades</option>' +
-                '<option value="Conhecimentos Específicos">Conhecimentos Específicos</option>' +
-                '<option value="custom">✏️ Digitar outra matéria...</option>' +
-                '</select>' +
-                '</div>' +
-                '<input type="number" class="peso-input" min="1" max="5" value="3" placeholder="Peso">' +
-                '<input type="number" class="dificuldade-input" min="1" max="5" value="3" placeholder="Dificuldade">' +
-                '<input type="number" class="extensao-input" min="1" max="5" value="3" placeholder="Extensão">' +
-                '<button class="btn btn-danger" onclick="removerMateria(this)">❌</button>' +
-                '</div>' +
-                '<input type="text" class="materia-custom" placeholder="Digite o nome da matéria" style="display: none;">';
-            
-            novaMateria.innerHTML = html;
-            materiasList.appendChild(novaMateria);
-        }
+      function adicionarMateria() {
+    var materiasList = document.getElementById('materiasList');
+    var novaMateria = document.createElement('div');
+    novaMateria.className = 'materia-item';
+
+    var html = '<div class="materia-row">' +
+        '<div>' +
+        '<select class="materia-select" onchange="toggleCustomInput(this)">' +
+        '<option value="">Selecione uma matéria</option>' +
+        '<option value="Administração">Administração</option>' +
+        '<option value="Atualidades">Atualidades</option>' +
+        '<option value="Administração Financeira e Orçamentária">Administração Financeira e Orçamentária</option>' +
+        '<option value="Arquivologia">Arquivologia</option>' +
+        '<option value="Atendimento ao Público">Atendimento ao Público</option>' +
+        '<option value="Contabilidade">Contabilidade</option>' +
+        '<option value="Contabilidade Geral">Contabilidade Geral</option>' +
+        '<option value="Contabilidade Pública">Contabilidade Pública</option>' +
+        '<option value="Direito Administrativo">Direito Administrativo</option>' +
+        '<option value="Direito Civil">Direito Civil</option>' +
+        '<option value="Direito Constitucional">Direito Constitucional</option>' +
+        '<option value="Direito Penal">Direito Penal</option>' +
+        '<option value="Direito Previdenciário">Direito Previdenciário</option>' +
+        '<option value="Direito Processual Civil">Direito Processual Civil</option>' +
+        '<option value="Direito Processual Penal">Direito Processual Penal</option>' +
+        '<option value="Direito Tributário">Direito Tributário</option>' +
+        '<option value="Ética no Serviço Público">Ética no Serviço Público</option>' +
+        '<option value="Estatística">Estatística</option>' +
+        '<option value="Gestão de Pessoas">Gestão de Pessoas</option>' +
+        '<option value="Gestão de Recursos Materiais">Gestão de Recursos Materiais</option>' +
+        '<option value="Informática">Informática</option>' +
+        '<option value="Legislação Aplicada">Legislação Aplicada</option>' +
+        '<option value="Legislação de Trânsito">Legislação de Trânsito</option>' +
+        '<option value="Língua Estrangeira">Língua Estrangeira</option>' +
+        '<option value="Matemática">Matemática</option>' +
+        '<option value="Noções de Administração Pública">Noções de Administração Pública</option>' +
+        '<option value="Noções de Direito">Noções de Direito</option>' +
+        '<option value="Português">Português</option>' +
+        '<option value="Raciocínio Lógico">Raciocínio Lógico</option>' +
+        '<option value="Redação">Redação</option>' +
+        '<option value="Segurança Pública">Segurança Pública</option>' +
+        '<option value="Sociologia">Sociologia</option>' +
+        '<option value="custom">✏️ Digitar outra matéria...</option>' +
+        '</select>' +
+        '</div>' +
+        '<input type="number" class="peso-input" min="1" max="5" value="3" placeholder="Peso">' +
+        '<input type="number" class="dificuldade-input" min="1" max="5" value="3" placeholder="Dificuldade">' +
+        '<input type="number" class="extensao-input" min="1" max="5" value="3" placeholder="Extensão">' +
+        '<button class="btn btn-danger" onclick="removerMateria(this)">❌</button>' +
+        '</div>' +
+        '<input type="text" class="materia-custom" placeholder="Digite o nome da matéria" style="display: none;">';
+
+    novaMateria.innerHTML = html;
+    materiasList.appendChild(novaMateria);
+}
+
 
         function toggleCustomInput(selectElement) {
             var materiaItem = selectElement.closest('.materia-item');
